@@ -128,3 +128,22 @@ variable "lb_ingress_cidr_blocks" {
 variable "ecs_subnets" {
   type = list(string)
 }
+
+variable "efs_subnets" {
+  type = list(string)
+}
+
+variable "desired_tasks_count" {
+  type    = number
+  default = 1
+
+  validation {
+    condition     = var.desired_tasks_count == 0 || var.desired_tasks_count == 1
+    error_message = "Allowed values are 0 or 1."
+  }
+}
+
+variable "wait_for_steady_state" {
+  type    = bool
+  default = true
+}

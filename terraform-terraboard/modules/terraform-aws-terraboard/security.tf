@@ -37,3 +37,23 @@ resource "aws_security_group" "ecs_task" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "efs" {
+  name   = "${var.name}-efs"
+  vpc_id = var.vpc_id
+  tags   = merge(var.tags, { Name = "${var.name}-efs" })
+
+  ingress {
+    protocol        = "tcp"
+    from_port       = 2049
+    to_port         = 2049
+    security_groups = [aws_security_group.ecs_task.id]
+  }
+
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}

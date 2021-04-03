@@ -37,6 +37,25 @@ data "aws_iam_policy_document" "ecs_task" {
   }
 }
 
+resource "aws_iam_role_policy" "efs_access" {
+  name   = "efs-access"
+  role   = aws_iam_role.ecs_task.id
+  policy = data.aws_iam_policy_document.efs_access.json
+}
+
+data "aws_iam_policy_document" "efs_access" {
+  statement {
+    actions   = ["elasticfilesystem:Client*"]
+    resources = [aws_efs_file_system.main.arn]
+
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "elasticfilesystem:AccessPointArn"
+      values   = [aws_efs_access_point.postgresql_data.arn]
+    }
+  }
+}
+
 resource "aws_iam_role_policy" "terraboard_assume_role" {
   name   = "terraboard-assume-role"
   role   = aws_iam_role.ecs_task.id

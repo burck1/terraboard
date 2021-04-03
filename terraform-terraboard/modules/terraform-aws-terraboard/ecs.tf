@@ -12,10 +12,10 @@ resource "aws_ecs_service" "main" {
   name                  = var.name
   cluster               = aws_ecs_cluster.main.id
   task_definition       = aws_ecs_task_definition.main.arn
-  desired_count         = 1
+  desired_count         = var.desired_tasks_count
   launch_type           = "FARGATE"
   tags                  = merge(var.tags, { Name = var.name })
-  wait_for_steady_state = true
+  wait_for_steady_state = var.wait_for_steady_state
 
   network_configuration {
     security_groups  = [aws_security_group.ecs_task.id]
@@ -51,11 +51,23 @@ resource "aws_ecs_task_definition" "main" {
 
   volume {
     name = local.volume_name
+
+    efs_volume_configuration {
+      file_system_id     = aws_efs_file_system.main.id
+      transit_encryption = "ENABLED"
+
+      authorization_config {
+        access_point_id = aws_efs_access_point.postgresql_data.id
+        iam             = "ENABLED"
+      }
+    }
   }
 
   depends_on = [
     aws_iam_role_policy_attachment.ecs_execution,
     aws_iam_role_policy.terraboard_assume_role,
+    aws_efs_file_system_policy.main,
+    aws_efs_mount_target.main,
   ]
 }
 
