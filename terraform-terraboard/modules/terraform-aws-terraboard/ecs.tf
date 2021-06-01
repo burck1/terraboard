@@ -17,6 +17,9 @@ resource "aws_ecs_service" "main" {
   tags                  = merge(var.tags, { Name = var.name })
   wait_for_steady_state = var.wait_for_steady_state
 
+  deployment_minimum_healthy_percent = 0
+  deployment_maximum_percent         = 100
+
   network_configuration {
     security_groups  = [aws_security_group.ecs_task.id]
     subnets          = var.ecs_subnets
