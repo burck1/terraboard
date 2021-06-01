@@ -10,7 +10,7 @@ variable "tags" {
 
 variable "terraboard_image" {
   type        = string
-  default     = "camptocamp/terraboard:1.0.0"
+  default     = "camptocamp/terraboard:1.1.0"
   description = "https://hub.docker.com/r/camptocamp/terraboard/tags"
 }
 
