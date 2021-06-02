@@ -25,6 +25,9 @@ resource "aws_lb_target_group" "main" {
   vpc_id      = var.vpc_id
   target_type = "ip"
 
+  deregistration_delay = 30
+  slow_start           = 0
+
   health_check {
     healthy_threshold   = "3"
     interval            = "30"
